@@ -121,7 +121,33 @@ cd robot-arm-sim-lab
 - `git clone`：将 GitHub 远程仓库复制到本地。
 - `cd`：切换到项目目录。
 
-## 5. 项目路线图
+## 5. NumPy 机械臂关节分析
+
+项目已创建独立虚拟环境 `.venv`，并安装 NumPy：
+
+```powershell
+python -m pip install numpy
+python -m pip freeze > requirements.txt
+```
+
+- `python -m pip install numpy`：在当前项目的虚拟环境中安装 NumPy。
+- `python -m pip freeze > requirements.txt`：将已安装库及版本写入依赖清单，便于他人复现实验环境。
+
+第一个项目源文件为 `src/joint_state.py`。它使用 NumPy 数组同时处理六个关节角度：
+
+```python
+unsafe_mask = np.abs(joint_angles) > SAFE_LIMIT_RAD
+unsafe_joint_numbers = np.where(unsafe_mask)[0] + 1
+```
+
+- `np.abs`：同时计算所有关节角度的绝对值。
+- 比较运算：同时判断所有关节是否超过安全阈值。
+- `np.where`：找出值为真的数组位置。
+- `+ 1`：将从 0 开始的 Python 下标转换为机械臂的第 1、2、3 个关节编号。
+
+当前测试结果：6 个关节的平均角度为 `0.25 rad`，第 4 个关节的角度为 `1.20 rad`，超过 `1.0 rad` 的安全限制。
+
+## 6. 项目路线图
 
 1. 配置 Python 虚拟环境，安装 NumPy。
 2. 用 NumPy 处理关节向量、位姿与三维坐标。
@@ -132,14 +158,15 @@ cd robot-arm-sim-lab
 7. 在 Ubuntu 中学习 Docker、ROS2，并接入机器人工作流。
 8. 完善 README、演示视频和简历项目描述。
 
-## 6. 复习问题
+## 7. 复习问题
 
 1. 为什么 Python 列表的第 3 个元素写作 `list[2]`？
 2. `git add` 和 `git commit` 分别做什么？
 3. 为什么机器人控制程序需要设置关节安全范围？
 4. 为什么大型数据集和 Python 虚拟环境不应直接提交到 GitHub？
 5. MuJoCo 在本项目中承担什么作用？
+6. `np.where(unsafe_mask)[0] + 1` 为什么最终得到 `[4]`？
 
-## 7. 下一步
+## 8. 下一步
 
 下一课：安装 NumPy，并学习如何用数组表示机械臂关节向量和末端三维坐标。
