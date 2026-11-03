@@ -147,6 +147,31 @@ unsafe_joint_numbers = np.where(unsafe_mask)[0] + 1
 
 当前测试结果：6 个关节的平均角度为 `0.25 rad`，第 4 个关节的角度为 `1.20 rad`，超过 `1.0 rad` 的安全限制。
 
+### 5.1 函数化与自动化测试
+
+`analyze_joint_state` 被重构为可复用函数，返回一个包含关节数量、平均角度和超限关节编号的字典。
+
+```python
+if __name__ == "__main__":
+    main()
+```
+
+这段条件判断保证：直接运行 `joint_state.py` 时才执行演示代码；其他程序导入 `analyze_joint_state` 时，不会自动执行演示。
+
+测试文件为 `tests/test_joint_state.py`，使用 Python 自带的 `unittest` 框架。当前包含三项测试：
+
+1. 所有关节在安全范围内。
+2. 正确发现第 2、3 个超限关节。
+3. 空关节列表会抛出 `ValueError`。
+
+运行测试：
+
+```powershell
+python -m unittest discover -s tests -v
+```
+
+当前结果：`Ran 3 tests`，`OK`。
+
 ## 6. 项目路线图
 
 1. 配置 Python 虚拟环境，安装 NumPy。
