@@ -172,7 +172,33 @@ python -m unittest discover -s tests -v
 
 当前结果：`Ran 3 tests`，`OK`。
 
-## 6. 项目路线图
+## 6. MuJoCo 单关节动力学仿真
+
+已安装 MuJoCo，并创建第一个机器人模型：`models/one_joint_arm.xml`。
+
+模型包含：
+
+- 重力和 `0.002 s` 仿真步长；
+- 地面与光源；
+- 一个绕 Y 轴转动、范围为 `-90°` 到 `90°` 的 hinge 关节；
+- 一根胶囊形连杆；
+- 一个可供后续控制器使用的电机。
+
+仿真入口为 `src/run_one_joint_sim.py`。核心 API：
+
+```python
+model = mujoco.MjModel.from_xml_path(str(MODEL_PATH))
+data = mujoco.MjData(model)
+mujoco.mj_step(model, data)
+```
+
+- `MjModel`：模型的固定结构、物理参数和关节定义。
+- `MjData`：一次运行中的动态状态，例如关节位置 `qpos`、速度 `qvel`、仿真时间 `time`。
+- `mj_step`：让物理引擎推进一个时间步。
+
+第一次实验：将关节初始化为 `0.800 rad`，运行 500 步。仿真时间为 `1.000 s`，结束时角度约为 `0.276 rad`、速度约为 `3.844 rad/s`。状态发生变化，说明重力正在驱动摆臂运动。
+
+## 7. 项目路线图
 
 1. 配置 Python 虚拟环境，安装 NumPy。
 2. 用 NumPy 处理关节向量、位姿与三维坐标。
@@ -183,7 +209,7 @@ python -m unittest discover -s tests -v
 7. 在 Ubuntu 中学习 Docker、ROS2，并接入机器人工作流。
 8. 完善 README、演示视频和简历项目描述。
 
-## 7. 复习问题
+## 8. 复习问题
 
 1. 为什么 Python 列表的第 3 个元素写作 `list[2]`？
 2. `git add` 和 `git commit` 分别做什么？
@@ -191,7 +217,9 @@ python -m unittest discover -s tests -v
 4. 为什么大型数据集和 Python 虚拟环境不应直接提交到 GitHub？
 5. MuJoCo 在本项目中承担什么作用？
 6. `np.where(unsafe_mask)[0] + 1` 为什么最终得到 `[4]`？
+7. `MjModel` 和 `MjData` 分别存储什么？
+8. 为什么每次调用 `mujoco.mj_step` 后，关节角度和速度可能改变？
 
-## 8. 下一步
+## 9. 下一步
 
 下一课：安装 NumPy，并学习如何用数组表示机械臂关节向量和末端三维坐标。
